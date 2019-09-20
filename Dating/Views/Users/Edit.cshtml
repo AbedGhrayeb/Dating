@@ -1,0 +1,101 @@
+﻿@model UserDetailesViewModel
+@{ 
+    ViewData["Title"] = "Edit";
+}
+
+
+<div class="row">
+    <div class="col-sm-4">
+        <h1>Your Profile:</h1>
+    </div>
+    <div class="col-sm-8">
+        <div class="alert alert-info">
+            <p class="lead"><strong>Information:</strong> You Have Made Change. Any Unsaved Changes Will Be Lost!</p>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-4">
+        <div class="card">
+            <div div class="card-img">
+                <img class="img-fluid img-thumbnail m-2" src="@Model.PhotoUrl" alt="@Model.KnownAs" />
+            </div>
+            <div class="card-body">
+                <div>
+                    <strong>Location:</strong>
+                    <p>@Model.Country, @Model.City</p>
+                </div>
+                <div>
+                    <strong>Age:</strong>
+                    <p>@Model.Age</p>
+                </div>
+                <div>
+                    <strong>Last Active:</strong>
+                    <p>@Model.LastActive</p>
+                </div>
+                <div>
+                    <strong>Member Since:</strong>
+                    <p>@Model.Created</p>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+    <div class="col-md-8">
+
+        <div class="card">
+
+            <div class="card-header">
+                <h4 class="card-title">Edit Ptofile Details</h4>
+            </div>
+
+            <form asp-action="Edit" asp-controller="Users" method="post">
+                <div class="card-body m-2">
+                    <div class="form-group row mb-3">
+                        <h4>Description:</h4>
+                        <textarea class="form-control col-sm-12" rows="6" asp-for="Introduction"></textarea>
+                        <span asp-validation-for="Introduction" class="text-danger"></span>
+                    </div>
+                    <div class="form-group row mb-3">
+                        <h4>Looking For:</h4>
+                        <textarea class="form-control col-sm-12" rows="6" asp-for="LookingFor"></textarea>
+                        <span asp-validation-for="LookingFor" class="text-danger"></span>
+                    </div>
+                    <div class="form-group row mb-3">
+                        <h4>Interests:</h4>
+                        <textarea class="form-control col-sm-12" rows="6" asp-for="Interests"></textarea>
+                        <span asp-validation-for="Interests" class="text-danger"></span>
+                    </div>
+
+                    <hr />
+                    <h4>Location Details:</h4>
+                    <div class="form-group row">
+                        <label asp-for="City" class="col-sm-2 col-form-label"></label>
+                        <div class="col-sm-10">
+                            <input asp-for="City" class="form-control" />
+                        </div>
+                        <span asp-validation-for="City" class="text-danger"></span>
+                    </div>
+                    <div class="form-group row">
+                        <label asp-for="Country" class="col-sm-2 col-form-label"></label>
+                        <div class="col-sm-10">
+                            <input asp-for="Country" class="form-control" />
+                        </div>
+                        <span asp-validation-for="Country" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-success" type="submit">Save Changes</button>
+                    <a class="btn btn-warning" asp-action="UpdatePhotos" asp-controller="Photos" asp-route-id="@Model.Id">Update Photos</a>
+                    <a class="btn btn-secondary" asp-area="Identity" asp-page="/Account/Manage/Index">Back to Profile setting</a>
+                </div>
+            </form>
+
+        </div>
+
+
+    </div>
+
+</div>
+

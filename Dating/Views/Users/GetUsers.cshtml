@@ -1,0 +1,15 @@
+﻿@model IEnumerable<UsersListViewModel>
+@{
+    ViewData["Title"] = "GetUsers";
+}
+
+    <div class="row equals">
+
+        @foreach (var user in Model)
+        {
+
+                <partial name="Member" model="user" />
+                }
+        </div>
+
+

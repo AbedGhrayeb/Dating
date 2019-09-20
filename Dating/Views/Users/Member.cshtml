@@ -1,0 +1,22 @@
+﻿@model UsersListViewModel
+ 
+<div class="card m-1 justify-content-center">
+    <div class="card-body">
+        <div class="card-img">
+            <img src="@Model.PhotoUrl" alt="@Model.KnownAs" class="img-fluid img-thumbnail" asp-append-version="true" />
+            <ul class="list-inline text-center member-icons animate">
+                <li class="list-inline-item"><a asp-action="GetUser" asp-controller="Users" asp-route-id="@Model.Id"
+                                                class="btn btn-primary"><i class="fas fa-user"></i></a></li>
+                <li class="list-inline-item"><button class="btn btn-primary"><i class="fas fa-heart"></i></button></li>
+                <li class="list-inline-item"><button class="btn btn-primary"><i class="fas fa-envelope"></i></button></li>
+            </ul>
+        </div>
+        <div class="text-center">
+            <h5 class="card-text mt-1 mb-1"><i class="fas fa-user"></i> @Model.KnownAs, @Model.Age</h5>
+        </div>
+        <div class="text-center">
+            <h5><small>@Model.City</small></h5>
+
+        </div>
+    </div>
+</div>

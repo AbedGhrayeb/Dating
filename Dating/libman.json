@@ -1,0 +1,22 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "alertify.js@0.5.0",
+      "destination": "wwwroot/lib/alertify.js/"
+    },
+    {
+      "library": "font-awesome@5.10.2",
+      "destination": "wwwroot/lib/font-awesome/"
+    },
+    {
+      "library": "cloudinary-jquery-file-upload@2.7.4",
+      "destination": "wwwroot/lib/cloudinary-jquery-file-upload/"
+    },
+    {
+      "library": "blueimp-file-upload@10.2.0",
+      "destination": "wwwroot/lib/blueimp-file-upload/"
+    }
+  ]
+}

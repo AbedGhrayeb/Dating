@@ -1,0 +1,31 @@
+﻿@{
+    ViewData["Title"] = "Errors";
+}
+
+
+<h2 class="text-danger">An error occurred while processing your request.</h2>
+<h5>Please Contact Us on support@domain.com</h5>
+
+<hr />
+<h3>Exception Details</h3>
+<div class="alert alert-danger">
+    <h5>Exception Path:</h5>
+    <hr />
+    <p class="lead">
+        @ViewBag.ExceptionPath
+    </p>
+</div>
+<div class="alert alert-danger">
+    <h5>Exception Message:</h5>
+    <hr />
+    <p class="lead">
+        @ViewBag.ExceptionMessage
+    </p>
+</div>
+<div class="alert alert-danger">
+    <h5>Exception Stack Trace:</h5>
+    <hr />
+    <p class="lead">
+        @ViewBag.StacksTrace
+    </p>
+</div>
