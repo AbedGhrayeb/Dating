@@ -1,0 +1,16 @@
+﻿@model PhotosListViewModel
+<div class="card m-1 justify-content-center">
+    <div class="card-body">
+        <div class="card-img">
+            <img src="@Model.Url"  class="img-fluid img-thumbnail" asp-append-version="true" />
+            <form>
+                <ul class="list-inline text-center member-icons animate">
+                    <li class="list-inline-item"><button type="submit" asp-action="SetMain" asp-controller="Photos" class="btn btn-warning"><i class="fas fa-sync"></i></button></li>
+                    <li class="list-inline-item"><button type="submit" asp-action="Delete" asp-controller="Photos" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button></li>
+                </ul>
+            </form>
+            
+        </div>
+
+    </div>
+</div>

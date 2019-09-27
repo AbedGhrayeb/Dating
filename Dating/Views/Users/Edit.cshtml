@@ -1,8 +1,9 @@
 ﻿@model UserDetailesViewModel
-@{ 
+@{
     ViewData["Title"] = "Edit";
 }
 
+<script src="jquery.timeago.js" type="text/javascript"></script>
 
 <div class="row">
     <div class="col-sm-4">
@@ -31,11 +32,11 @@
                 </div>
                 <div>
                     <strong>Last Active:</strong>
-                    <p>@Model.LastActive</p>
+                    <p>@Model.LastSeen</p>
                 </div>
                 <div>
                     <strong>Member Since:</strong>
-                    <p>@Model.Created</p>
+                    <p>@Model.Created.ToShortDateString()</p>
                 </div>
 
             </div>
@@ -87,7 +88,7 @@
                 </div>
                 <div class="card-footer">
                     <button class="btn btn-success" type="submit">Save Changes</button>
-                    <a class="btn btn-warning" asp-action="UpdatePhotos" asp-controller="Photos" asp-route-id="@Model.Id">Update Photos</a>
+                    <a class="btn btn-warning" asp-action="PhotosList" asp-controller="Photos" asp-route-userId="@Model.Id">Manage Photos</a>
                     <a class="btn btn-secondary" asp-area="Identity" asp-page="/Account/Manage/Index">Back to Profile setting</a>
                 </div>
             </form>

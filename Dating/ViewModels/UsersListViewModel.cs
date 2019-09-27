@@ -24,4 +24,5 @@ namespace Dating.ViewModels
         public string City { get; set; }
         public string PhotoUrl { get; set; }
     }
+   
 }

@@ -69,6 +69,7 @@ namespace Dating
             services.AddScoped<IDatingRepository, DatingRepository>();
 
             services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
+            services.AddCors();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
@@ -95,7 +96,7 @@ namespace Dating
             app.UseCookiePolicy();
             seed.SeedUser();
             app.UseAuthentication();
-
+            app.UseCors();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

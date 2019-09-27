@@ -34,7 +34,8 @@ namespace Dating.Mapping
                 }); ;
 
             CreateMap<UserDetailesViewModel, AppUser>();
-            CreateMap<Photo, PhotoDetailsViewModel>();
+            CreateMap<Photo, PhotosListViewModel>();
+            CreateMap<PhotosListViewModel,Photo>();
         }
     }
 }

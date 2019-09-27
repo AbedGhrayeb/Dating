@@ -1,130 +1,177 @@
-﻿//using AutoMapper;
-//using CloudinaryDotNet;
-//using CloudinaryDotNet.Actions;
-//using Dating.Data.Repositories;
-//using Dating.Helpers;
-//using Dating.Models;
-//using Dating.ViewModels;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.Extensions.Options;
-//using System.IO;
-//using System.Linq;
-//using System.Security.Claims;
-//using System.Threading.Tasks;
+﻿using AutoMapper;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using Dating.Data.Repositories;
+using Dating.Helpers;
+using Dating.Models;
+using Dating.ViewModels;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using System.Web;
 
-//namespace Dating.Controllers
-//{
-//    //[Route("api/photos")]
-//    //[ApiController]
-//    public class PhotosController : Controller
-//    {
-//        private readonly IDatingRepository repo;
-//        private readonly IMapper mapper;
-//        private readonly IOptions<CloudinarySettings> cloudinaryOptions;
-//        private readonly Cloudinary cloudinary;
+namespace Dating.Controllers
+{
 
-//        public PhotosController(IDatingRepository repo, IMapper mapper,
-//            IOptions<CloudinarySettings> cloudinaryOptions)
-//        {
-//            this.repo = repo;
-//            this.mapper = mapper;
-//            this.cloudinaryOptions = cloudinaryOptions;
+    public class PhotosController : Controller
+    {
+        private readonly IDatingRepository _repo;
+        private readonly IMapper _mapper;
+        private readonly IOptions<CloudinarySettings> _cloudinaryOptions;
+        private readonly Cloudinary _cloudinary;
+        public PhotosController(IDatingRepository repo, IMapper mapper,
+            IOptions<CloudinarySettings> cloudinaryOptions)
+        {
+            _repo = repo;
+            _mapper = mapper;
+            _cloudinaryOptions = cloudinaryOptions;
 
-//            Account account = new Account(
-//                cloudinaryOptions.Value.CloudName,
-//            cloudinaryOptions.Value.ApiKey,
-//            cloudinaryOptions.Value.ApiSecret
-//            );
-//            cloudinary = new Cloudinary(account);
-//        }
+            Account account = new Account(
+                cloudinaryOptions.Value.CloudName,
+            cloudinaryOptions.Value.ApiKey,
+            cloudinaryOptions.Value.ApiSecret
+            );
+            _cloudinary = new Cloudinary(account);
+        }
 
-//        public IActionResult UserPhotos() => View();
-//        [HttpGet]
-//        public IActionResult UpdatePhotos(string id)
-//        {
-//            return View();
-//        }
+        private bool TrueUser(string userId)
+        {
+           
+            var currentuserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            if (currentuserId != userId)
+            {
+                return false;
+            }
+            return true;
+        }
+        public async Task<IActionResult> PhotosList(string userId)
+        {
+            if (userId == null)
+            {
+                return NotFound();
+            }
+            if (!TrueUser(userId))
+            {
+                return StatusCode(401);
+            }
+            ViewBag.UserId = userId;
+            var photos= await _repo.GetPhotos(userId);
+            //var photosToReturn = _mapper.Map<IEnumerable<PhotosListViewModel>>(photos);
+            return PartialView("PhotosList", new PhotosModel(_cloudinary, photos));
+        }
+        public ActionResult UploadDirectly(string userId)
+        {
+            if (userId == null)
+            {
+                return NotFound();
+            }
+            if (!TrueUser(userId))
+            {
+                return StatusCode(401);
+            }
+            var model = new DictionaryModel(_cloudinary, new Dictionary<string, string>()
+            { { "unsigned", "false" } });
 
-//        [HttpPost]
-//        public async Task<IActionResult> UpdatePhotos(CreatePhotoViewModel viewModel)
-//        {
-//            //get the user with id incomming
-//            var user = await repo.GetUser(userId);
-//            if (user==null)
-//            {
-//                return NotFound(user);
-//            }
-//            //get current user id
-//            var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-//            //check current user id with incomming user id
-//            if (currentUserId!=user.Id)
-//            {
-//                return Unauthorized();
-//            }
-//            //get file property from view model
-//            var file = viewModel.File;
+            return PartialView("UploadDirectly", model);
+        }
 
-//            //definde parameter that store imge upload information
-//            var uploadResult = new ImageUploadResult();
-//            //check if file exist
-//            if (file.Length>0)
-//            { 
-//                //read file stream and save in parameter {stream}
-//                using(Stream stream = file.OpenReadStream())
-//                {
-//                    // store image uploaded
-//                    var uploadParams = new ImageUploadParams()
-//                    {
-//                        File = new FileDescription(file.Name, stream)
-//                    };
-//                    //upload image to cloudinary
-//                    uploadResult = cloudinary.Upload(uploadParams);
-//                }
-//            }
-//            //get image information
+        public ActionResult UploadDirectlyUnsigned(string userId)
+        {
+            if (userId == null)
+            {
+                return NotFound();
+            }
+            if (!TrueUser(userId))
+            {
+                return StatusCode(401);
+            }
+            var preset = "sample_" + _cloudinary.Api.SignParameters(new SortedDictionary<string, object>()
+            { { "api_key", _cloudinary.Api.Account.ApiKey } })
+                .Substring(0, 10);
+            var result = _cloudinary.CreateUploadPreset(new UploadPresetParams()
+            { Name = preset, Unsigned = true, Folder = "preset_folder" }
+            );
 
-//            viewModel.Url = uploadResult.Uri.ToString();
-//            viewModel.PublicId = uploadResult.PublicId;
-//            //map phot view model to photo class 
-//            Photo photo = mapper.Map<Photo>(viewModel);
-//            //connect photo to current user
-//            photo.AppUser = user;
-//            //set main photo if user noot set any photo
-//            if (!user.Photos.Any(m=>m.IsMain))
-//            {
-//                photo.IsMain = true;
-//            }
-//            //add photo to user
-//            user.Photos.Add(photo);
-//            if (await repo.SaveAll())
-//            {
-//                return View(nameof(UserPhotos));
-//            }
-//            return BadRequest("Could bot add the photo"); ;
-//        }
+            var model = new DictionaryModel(_cloudinary, new Dictionary<string, string>()
+            { { "unsigned", "true" },
+                { "preset", preset } });
 
-//       //private void UploadPhotos(UserDetailesViewModel viewModel)
-//       // {
-//       //     //get file property from view model
-//       //     var file = viewModel.File;
+            return PartialView("UploadDirectly", model);
+        }
 
-//       //     //definde parameter that store imge upload information
-//       //     var uploadResult = new ImageUploadResult();
-//       //     //check if file exist
-//       //     if (file.Length > 0)
-//       //     {
-//       //         //read file stream and save in parameter {stream}
-//       //         using (Stream stream = file.OpenReadStream())
-//       //         {
-//       //             // store image uploaded
-//       //             var uploadParams = new ImageUploadParams()
-//       //             {
-//       //                 File = new FileDescription(file.Name, stream)
-//       //             };
-//       //             //upload image to cloudinary
-//       //             uploadResult = cloudinary.Upload(uploadParams);
-//       //         }
-//       //     }
-//       // }
-//    }
-//}
+        [HttpPost]
+        public void UploadDirect(string userId)
+        {
+
+            //var headers = HttpContext.Request.Headers;
+
+            //string content = null;
+            //using (StreamReader reader = new StreamReader(HttpContext.Request.Form.Files.ToString()))
+            //{
+            //    content = reader.ReadToEnd();
+            //}
+            //if (String.IsNullOrEmpty(content)) return;
+
+            //Dictionary<string, string> results = new Dictionary<string, string>();
+
+            //string[] pairs = content.Split(new char[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
+            //foreach (var pair in pairs)
+            //{
+            //    string[] splittedPair = pair.Split('=');
+
+            //    if (splittedPair[0].StartsWith("faces"))
+            //        continue;
+
+            //    results.Add(splittedPair[0], splittedPair[1]);
+            //}
+            var files = HttpContext.Request.Form.Files;
+            var results = new ImageUploadResult();
+            foreach (var file in files)
+            {
+                if (file != null && file.Length > 0)
+                {
+                    using (var stream = file.OpenReadStream())
+                    {
+                        var uploadParams = new ImageUploadParams()
+                        {
+                            File = new FileDescription(file.Name, stream)
+                        };
+                        results = _cloudinary.Upload(uploadParams);
+                    }
+
+                    Photo p = new Photo()
+                    {
+                       
+                        CreatedAt = results.CreatedAt,
+                        Format = results.Format,
+                        Height = results.Height,
+                        
+                        PublicId = results.PublicId,
+                        ResourceType = results.ResourceType,
+                        SecureUrl = results.SecureUri.ToString(),
+                        Signature = results.Signature,
+                        Type = results.Type,
+                        Url = results.Uri.ToString(),
+                        Version = Int32.Parse(results.Version),
+                       Width=results.Width,
+                        AppUserId = userId
+                    };
+                    _repo.AddPhotos(p);
+
+                }
+            }
+
+            
+            
+        }
+
+
+
+    }
+}

@@ -1,40 +1,48 @@
-﻿using System;
+﻿using AutoMapper;
+using Dating.Data.Repositories;
+using Dating.Helpers;
+using Dating.ViewModels;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using AutoMapper;
-using CloudinaryDotNet;
-using CloudinaryDotNet.Actions;
-using Dating.Data.Repositories;
-using Dating.Helpers;
-using Dating.Models;
-using Dating.ViewModels;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace Dating.Controllers
 {
-  [Authorize]
     public class UsersController : Controller
     {
+       
         private readonly IDatingRepository _repo;
         private readonly IMapper _mapper;
-
         public UsersController(IDatingRepository repository,IMapper mapper)
         {
             _repo = repository;
             _mapper = mapper;
         }
         // GET: Users
-        public async Task<ActionResult> GetUsers()
+        public async Task<ActionResult> GetUsers(UserParams userParams)
         {
-            var users= await _repo.GetUsers();
+            var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+           
+            var user = await _repo.GetUser(currentUserId);
+            userParams.UserId = currentUserId;
+            if (string.IsNullOrEmpty(userParams.Gender))
+            {
+                userParams.Gender = user.Gender == "male" ? "female" : "male";
+            }
+            var users = await _repo.GetUsers(userParams);
             var usersToReturn = _mapper.Map<IEnumerable<UsersListViewModel>>(users);
+
+             Response.AddPagination(users.CurrentPage, users.PageSize, users.TotalItemsCount, users.TotalPages);
+
+            ViewBag.CurrentPage = users.CurrentPage;
+            ViewBag.TotalPages = users.TotalPages;
+            ViewBag.TotalItems = users.TotalItemsCount;
+            ViewBag.LastActive = users.OrderByDescending(l=>l.LastActive);
+            ViewBag.Created = users.OrderByDescending(l=>l.Created);
+
             return View(usersToReturn);
         }
 

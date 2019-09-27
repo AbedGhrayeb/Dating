@@ -1,0 +1,25 @@
+﻿@model IEnumerable<PhotosListViewModel>
+    @{
+        ViewData["Title"] = "Manage Photos";
+    }
+    @if (!Model.Any())
+    {
+        <h4>No uploaded photos yet..</h4>
+        <p>
+            <a asp-action="UploadPhotos" asp-controller="Photos" asp-route-userId="@ViewBag.UserId" class="btn btn-primary">Upload New Photo</a>
+        </p>
+    }
+    else
+    {
+        <h4>My Photos:</h4>
+        <hr />
+        <p>
+            <a asp-action="UploadPhotos" asp-controller="Photos" asp-route-userId="@ViewBag.UserId" class="btn btn-primary">Upload New Photo</a>
+        </p>
+        <div class="row equals">
+            @foreach (var p in Model)
+            {
+                <partial name="Photo" model="p" />
+            }
+        </div>
+    }

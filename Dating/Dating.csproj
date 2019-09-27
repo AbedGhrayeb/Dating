@@ -15,15 +15,10 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="9.0.0" />
     <PackageReference Include="CloudinaryDotNet" Version="1.8.0" />
-    <PackageReference Include="jQuery.FileUpload" Version="9.22.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
-  </ItemGroup>
-
-
-  <ItemGroup>
-    <Folder Include="wwwroot\images\" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.0.0" />
+    <PackageReference Include="TimeAgo" Version="1.0.8" />
   </ItemGroup>
 
 </Project>

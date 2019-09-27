@@ -7,7 +7,7 @@
 <ul class="nav nav-pills flex-column">
     <li class="nav-item"><a class="nav-link @ManageNavPages.IndexNavClass(ViewContext)" id="profile" asp-page="./Index">Profile</a></li>
     <li class="nav-item"><a class="nav-link" asp-action="Edit" asp-controller="Users" asp-route-id="@userId">Profile Details</a></li>
-    <li class="nav-item"><a class="nav-link" asp-action="UpdatePhotos" asp-controller="Photos" asp-route-id="@userId">Update Photos</a></li>
+    <li class="nav-item"><a class="nav-link" asp-action="PhotosList" asp-controller="Photos" asp-route-userId="@userId">Manage Photos</a></li>
     <li class="nav-item"><a class="nav-link @ManageNavPages.ChangePasswordNavClass(ViewContext)" id="change-password" asp-page="./ChangePassword">Password</a></li>
     @if (hasExternalLogins)
     {

@@ -17,5 +17,7 @@ namespace Dating.ViewModels
         public DateTime DateAdded { get; set; }
         public string PublicId { get; set; }
         public IFormFile File { get; set; }
+        public string AppUserId { get; set; }
+        public string ExistingPhotoPath { get; set; }
     }
 }
